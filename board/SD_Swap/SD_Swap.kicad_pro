@@ -432,6 +432,8 @@
           "/SS_RX-",
           "/SS_TX+",
           "/SS_TX-",
+          "/SS_TXC+",
+          "/SS_TXC-",
           "/USB+",
           "/USB-"
         ],
