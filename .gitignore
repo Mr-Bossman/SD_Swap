@@ -2,10 +2,11 @@
 **.zip
 **/**-backups/
 **\#auto_saved_files\#
+**_autosave*
 **.kicad_prl
 **.pro
 **-bak
-/board/gerber/*
-!/board/gerber/.hidden
+/board/SD_Swap/gerber/*
+!/board/SD_Swap/gerber/.hidden
 **fp-info-cache
 
