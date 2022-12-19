@@ -345,6 +345,30 @@
         (name "DAT2" (effects (font (size 1.27 1.27))))
         (number "1" (effects (font (size 1.27 1.27))))
       )
+      (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+        (name "SHIELD" (effects (font (size 1.27 1.27))))
+        (number "10" (effects (font (size 1.27 1.27))))
+      )
+      (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+        (name "SHIELD" (effects (font (size 1.27 1.27))))
+        (number "11" (effects (font (size 1.27 1.27))))
+      )
+      (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+        (name "SHIELD" (effects (font (size 1.27 1.27))))
+        (number "12" (effects (font (size 1.27 1.27))))
+      )
+      (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+        (name "SHIELD" (effects (font (size 1.27 1.27))))
+        (number "13" (effects (font (size 1.27 1.27))))
+      )
+      (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+        (name "SHIELD" (effects (font (size 1.27 1.27))))
+        (number "14" (effects (font (size 1.27 1.27))))
+      )
+      (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+        (name "SHIELD" (effects (font (size 1.27 1.27))))
+        (number "15" (effects (font (size 1.27 1.27))))
+      )
       (pin bidirectional line (at 0 -12.7 0) (length 3.81)
         (name "DAT3" (effects (font (size 1.27 1.27))))
         (number "2" (effects (font (size 1.27 1.27))))

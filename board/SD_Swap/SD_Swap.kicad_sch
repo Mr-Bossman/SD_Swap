@@ -1577,6 +1577,30 @@
           (name "DAT2" (effects (font (size 1.27 1.27))))
           (number "1" (effects (font (size 1.27 1.27))))
         )
+        (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+          (name "SHIELD" (effects (font (size 1.27 1.27))))
+          (number "10" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+          (name "SHIELD" (effects (font (size 1.27 1.27))))
+          (number "11" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+          (name "SHIELD" (effects (font (size 1.27 1.27))))
+          (number "12" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+          (name "SHIELD" (effects (font (size 1.27 1.27))))
+          (number "13" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+          (name "SHIELD" (effects (font (size 1.27 1.27))))
+          (number "14" (effects (font (size 1.27 1.27))))
+        )
+        (pin passive line (at 10.16 -21.59 90) (length 3.81) hide
+          (name "SHIELD" (effects (font (size 1.27 1.27))))
+          (number "15" (effects (font (size 1.27 1.27))))
+        )
         (pin bidirectional line (at 0 -12.7 0) (length 3.81)
           (name "DAT3" (effects (font (size 1.27 1.27))))
           (number "2" (effects (font (size 1.27 1.27))))
@@ -3224,7 +3248,7 @@
     (property "Value" "~20p" (id 1) (at 127 147.828 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "Capacitor_SMD:C_0603_1608Metric" (id 2) (at 130.556 144.018 0)
+    (property "Footprint" "SD_Swap:105162-0001" (id 2) (at 130.556 144.018 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 130.556 144.018 0)
@@ -4424,13 +4448,19 @@
     (property "Value" "SD_SOCKET" (id 1) (at 261.366 41.402 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Footprint" "" (id 2) (at 240.792 27.051 0)
+    (property "Footprint" "SD_Swap:105162-0001" (id 2) (at 240.792 27.051 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "" (id 3) (at 240.792 27.051 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (pin "1" (uuid 29f1bd5d-3aa0-4c7d-b468-b14f81f71531))
+    (pin "10" (uuid 220bd4eb-30cb-42f7-9a6a-d3aa9074c304))
+    (pin "11" (uuid 295c598d-f2c0-4cc2-8741-cffb41bbd12b))
+    (pin "12" (uuid c34adc05-54f6-46a3-9c55-9d1b3e4e6d19))
+    (pin "13" (uuid 1a4eedb1-1ceb-4578-a652-2841fe05f3a9))
+    (pin "14" (uuid 85b8943e-96db-4777-9ee1-71b5568da785))
+    (pin "15" (uuid 257b1f93-d28e-4c13-a334-e402c0b52690))
     (pin "2" (uuid e4d519e3-f6f7-4af0-9a25-b9e3dfdbac12))
     (pin "3" (uuid bea532c1-2ac1-41d2-a9ce-e862c2a7bddb))
     (pin "4" (uuid a19a9f1d-c377-43fc-aa21-aa5eb923ac02))
@@ -4970,7 +5000,7 @@
       (reference "#PWR0139") (unit 1) (value "GND") (footprint "")
     )
     (path "/09a8b05e-56e6-46dc-90be-1c6b062da039"
-      (reference "C1") (unit 1) (value "~20p") (footprint "Capacitor_SMD:C_0603_1608Metric")
+      (reference "C1") (unit 1) (value "~20p") (footprint "SD_Swap:105162-0001")
     )
     (path "/882eddee-9bf3-4fbf-87b3-0ccbb64aa848"
       (reference "C2") (unit 1) (value "~20p") (footprint "Capacitor_SMD:C_0603_1608Metric")
@@ -5105,7 +5135,7 @@
       (reference "U5") (unit 1) (value "TS3A27518ERTW") (footprint "Package_DFN_QFN:WQFN-24-1EP_4x4mm_P0.5mm_EP2.6x2.6mm")
     )
     (path "/be70e1ce-920b-4f66-b03b-638f9009ed3e"
-      (reference "U6") (unit 1) (value "SD_SOCKET") (footprint "")
+      (reference "U6") (unit 1) (value "SD_SOCKET") (footprint "SD_Swap:105162-0001")
     )
     (path "/9fc772fc-7a92-45cc-a80f-b1ab89f05f6f"
       (reference "U7") (unit 1) (value "AP2127N-3.3") (footprint "Package_TO_SOT_SMD:SOT-23")
