@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name "SD_Swap")(type "KiCad")(uri "${KIPRJMOD}/SD_Swap.pretty")(options "")(descr ""))
+)
