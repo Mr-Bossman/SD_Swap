@@ -10,8 +10,8 @@ To manually controll the port use:
 
 ```
 export YOUR_USB_NUM="1-4" #hub1 port4
-echo 0 > sudo tee /sys/bus/usb/devices/${YOUR_USB_NUM}/power/autosuspend_delay_ms
-echo auto > sudo tee /sys/bus/usb/devices/${YOUR_USB_NUM}/power/control
+echo 0 | sudo tee /sys/bus/usb/devices/${YOUR_USB_NUM}/power/autosuspend_delay_ms
+echo auto | sudo tee /sys/bus/usb/devices/${YOUR_USB_NUM}/power/control
 
 echo SBC
 echo ${YOUR_USB_NUM} | sudo tee /sys/bus/usb/drivers/usb/unbind
@@ -21,7 +21,12 @@ echo ${YOUR_USB_NUM} | sudo tee /sys/bus/usb/drivers/usb/bind
 ```
 ### Hardware
 The hardware is still WIP, but I have a mostly working prototype.
-
+![Front image of PCB](https://github.com/Mr-Bossman/SD_Swap/blob/master/images/Front.jpg?raw=true)
+![Back image of PCB](https://github.com/Mr-Bossman/SD_Swap/blob/master/images/Back.jpg?raw=true)
+<!--
+![Front image of rendered PCB](https://github.com/Mr-Bossman/SD_Swap/blob/master/images/Rendered_Front.jpg?raw=true)
+![Back image of rendered PCB](https://github.com/Mr-Bossman/SD_Swap/blob/master/images/Rendered_Back.jpg?raw=true)
+-->
 
 ### About
 After seeing the [SDWire](https://wiki.tizen.org/SDWire) project I was disappointed by the complexity as well as the lack of USB3. So this project is uses the REALTEK RTS5306E which many USB3 to SD adapers implement, the chip has suspend functionality which we will use as a GPIO for switching hosts. The suspend option will shut off the SD cards power but not the controllers; it also has build-in RW protection as to finnish writes before switching to the SBC
