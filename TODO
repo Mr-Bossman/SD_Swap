@@ -1,9 +1,7 @@
 Edit pick n' place csv
-Calc Beta for PNP's
 Fix clearance on diff pairs
 Fix stat leds turning on PNP
 Label stat leds
 Debug not turning on on some ports????
-Remove 1.7v req
 regen sch and images
 Add images to readme
