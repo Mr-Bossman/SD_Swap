@@ -12,7 +12,31 @@ getdevice() {
 }
 
 print_help() {
-	echo TODO
+	cat << EOF
+To switch the SD card to USB run:
+$0 1
+To switch the SD card to SBC run:
+$0 0
+If you have multiple devices run either of the above.
+Then run with the last param the same as above:
+$0 \$(Your USB number) 0
+
+Examples:
+# $0 0
+Uisng device /sys/bus/usb/devices/3-4
+
+# $0 0
+Uisng device /sys/bus/usb/devices/3-4
+Already off.
+
+# $0 0
+Multiple devices found! Pass a usb number as param 1...
+Usb num: 3-4
+Usb num: 3-1
+
+# $0 3-1 0
+Uisng device /sys/bus/usb/devices/3-1
+EOF
 	exit 1
 }
 
@@ -44,6 +68,11 @@ if echo $DEVICES | grep -q " "; then
 	fi
 else
 		export DEVICE=$DEVICES
+fi
+
+if [ -z "$DEVICES" ]; then
+	echo "No devices found ;("
+	exit 1
 fi
 
 echo "Uisng device" $DEVICE
