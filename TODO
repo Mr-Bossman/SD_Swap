@@ -3,5 +3,8 @@ Fix clearance on diff pairs
 Fix stat leds turning on PNP
 Label stat leds
 Debug not turning on on some ports????
+^ caused by usb3 diff pairs.
 regen sch and images
 Add images to readme
+Add bigger reglator
+Add E-Fuse
