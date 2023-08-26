@@ -56,17 +56,25 @@
           "width": 0.0
         },
         {
-          "gap": 0.1016,
+          "gap": 0.2,
           "via_gap": 0.254,
-          "width": 0.117602
+          "width": 0.1902
         },
         {
-          "gap": 0.1016,
+          "gap": 0.2,
           "via_gap": 0.254,
-          "width": 0.17526
+          "width": 0.284
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        "courtyards_overlap|104555001|90749999|a4be0e24-07eb-4940-b4a3-663c58b8e0f4|e8d1aa95-39ca-4e3e-b158-6eb459a0f7e0",
+        "courtyards_overlap|109700001|83049999|6862123e-80c6-48d4-b6a6-ef459118867f|ffb68717-8097-4556-a014-05ee938b3e8b",
+        "courtyards_overlap|109700001|83713636|6862123e-80c6-48d4-b6a6-ef459118867f|ab9b5172-1b37-4856-9a40-6666f12161e6",
+        "courtyards_overlap|109875001|89849999|6862123e-80c6-48d4-b6a6-ef459118867f|3c8024ec-a8d8-4aa1-96a0-ef0091575d49",
+        "courtyards_overlap|110999999|88900001|3c8024ec-a8d8-4aa1-96a0-ef0091575d49|6862123e-80c6-48d4-b6a6-ef459118867f",
+        "lib_footprint_mismatch|130702797|81400000|fc512faf-06e7-4b6d-b415-235908f044c6|00000000-0000-0000-0000-000000000000",
+        "lib_footprint_mismatch|95000000|89475000|7592a7f4-121f-4541-8cae-f45b804c4086|00000000-0000-0000-0000-000000000000"
+      ],
       "meta": {
         "version": 2
       },
@@ -75,7 +83,7 @@
         "clearance": "error",
         "connection_width": "warning",
         "copper_edge_clearance": "error",
-        "copper_sliver": "warning",
+        "copper_sliver": "ignore",
         "courtyards_overlap": "error",
         "diff_pair_gap_out_of_range": "error",
         "diff_pair_uncoupled_length_too_long": "error",
@@ -107,7 +115,7 @@
         "silk_overlap": "warning",
         "skew_out_of_range": "error",
         "solder_mask_bridge": "error",
-        "starved_thermal": "error",
+        "starved_thermal": "ignore",
         "text_height": "warning",
         "text_thickness": "warning",
         "through_hole_pad_without_hole": "error",
@@ -124,7 +132,7 @@
         "allow_blind_buried_vias": false,
         "allow_microvias": false,
         "max_error": 0.005,
-        "min_clearance": 0.08,
+        "min_clearance": 0.09,
         "min_connection": 0.0,
         "min_copper_edge_clearance": 0.0,
         "min_hole_clearance": 0.19999999999999998,
@@ -186,13 +194,12 @@
       ],
       "track_widths": [
         0.0,
-        0.117602,
-        0.17526,
         0.2,
         0.25,
         0.3,
         0.4,
-        0.45
+        0.45,
+        1.0
       ],
       "via_dimensions": [
         {
@@ -224,7 +231,11 @@
   },
   "erc": {
     "erc_exclusions": [
-      "multiple_net_names|1082040|1087120|f537e38f-50f6-487b-86c2-c95102124149|df8046ca-33eb-44c9-9e79-e7fe85884a48|||"
+      "lib_symbol_issues|1033780|571500|3075d652-b7ac-42ab-9e42-82719810f0e6|00000000-0000-0000-0000-000000000000|||",
+      "lib_symbol_issues|1216660|919480|b25ab32b-8719-4593-aa5d-5c8f20bc0830|00000000-0000-0000-0000-000000000000|||",
+      "lib_symbol_issues|2059940|693420|29c4c50d-0f31-4972-82b9-453b9ce6dd6c|00000000-0000-0000-0000-000000000000|||",
+      "lib_symbol_issues|862330|553720|ce2a1840-a8e7-4d81-b5da-935fd5359b23|00000000-0000-0000-0000-000000000000|||",
+      "multiple_net_names|1102360|1262380|d7bcd44b-7bb2-4378-9573-05dbd49e27e2|8e65db30-c8b8-41f6-b678-75441b23f8f5|||"
     ],
     "meta": {
       "version": 0
@@ -409,7 +420,7 @@
       "different_unit_net": "error",
       "duplicate_reference": "error",
       "duplicate_sheet_names": "error",
-      "endpoint_off_grid": "warning",
+      "endpoint_off_grid": "ignore",
       "extra_units": "error",
       "global_label_dangling": "warning",
       "hier_label_mismatch": "error",
@@ -428,7 +439,7 @@
       "pin_to_pin": "warning",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
-      "simulation_model_issue": "error",
+      "simulation_model_issue": "ignore",
       "unannotated": "error",
       "unit_value_mismatch": "error",
       "unresolved_variable": "error",
@@ -447,7 +458,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.08,
+        "clearance": 0.09,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -464,7 +475,7 @@
       },
       {
         "bus_width": 12,
-        "clearance": 0.08,
+        "clearance": 0.09,
         "diff_pair_gap": 0.1016,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.117602,
@@ -481,17 +492,17 @@
       },
       {
         "bus_width": 12,
-        "clearance": 0.08,
-        "diff_pair_gap": 0.1016,
+        "clearance": 0.09,
+        "diff_pair_gap": 0.2,
         "diff_pair_via_gap": 0.25,
-        "diff_pair_width": 0.117602,
+        "diff_pair_width": 0.1902,
         "line_style": 0,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
         "name": "USBSS",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.12,
+        "track_width": 0.1902,
         "via_diameter": 0.4,
         "via_drill": 0.2,
         "wire_width": 6

@@ -1,0 +1,6 @@
+(version 1)
+(rule "USBSS outer"
+	(layer outer)
+	(constraint track_width (opt 0.2840mm))
+	(condition "A.NetClass == 'USBSS'")
+)
