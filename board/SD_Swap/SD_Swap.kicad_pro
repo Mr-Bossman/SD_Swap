@@ -471,7 +471,7 @@
         "name": "SDIO",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.23495,
+        "track_width": 0.22,
         "via_diameter": 0.4,
         "via_drill": 0.2,
         "wire_width": 6
@@ -502,75 +502,75 @@
     "netclass_patterns": [
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U2-Pad18)"
+        "pattern": "Net-(U2-SD_D0)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U2-Pad19)"
+        "pattern": "Net-(U2-SD_D1)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U2-Pad20)"
+        "pattern": "Net-(U2-SD_D2)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U2-Pad21)"
+        "pattern": "Net-(U2-SD_D3)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U2-Pad22)"
+        "pattern": "Net-(U2-SD_CLK)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U2-Pad23)"
+        "pattern": "Net-(U2-SD_CMD)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U3-Pad1)"
+        "pattern": "Net-(U3-DAT0)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U3-Pad2)"
+        "pattern": "Net-(U3-DAT1)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U3-Pad3)"
+        "pattern": "Net-(U3-DAT2)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U3-Pad5)"
+        "pattern": "Net-(U3-DAT3)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U3-Pad7)"
+        "pattern": "Net-(U3-CLK)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U3-Pad8)"
+        "pattern": "Net-(U3-CMD)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U5-Pad1)"
+        "pattern": "Net-(U5-COM1)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U5-Pad3)"
+        "pattern": "Net-(U5-COM2)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U5-Pad4)"
+        "pattern": "Net-(U5-COM3)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U5-Pad6)"
+        "pattern": "Net-(U5-COM4)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U5-Pad7)"
+        "pattern": "Net-(U5-COM5)"
       },
       {
         "netclass": "SDIO",
-        "pattern": "Net-(U5-Pad9)"
+        "pattern": "Net-(U5-COM6)"
       },
       {
         "netclass": "USBSS",
@@ -603,6 +603,10 @@
       {
         "netclass": "USBSS",
         "pattern": "/USB-"
+      },
+      {
+        "netclass": "Default",
+        "pattern": ""
       }
     ]
   },
