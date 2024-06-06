@@ -6,6 +6,7 @@
 **.kicad_prl
 **.pro
 **-bak
+**.bak
 /board/SD_Swap/gerber/*
 !/board/SD_Swap/gerber/.hidden
 **fp-info-cache
