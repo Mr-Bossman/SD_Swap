@@ -11961,7 +11961,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part Number" "QST8TR"
+		(property "Part Number" "QST8/QST9/IMT18/IMT17/BC807D"
 			(at 95.25 41.148 0)
 			(effects
 				(font
@@ -12694,7 +12694,7 @@
 				(hide yes)
 			)
 		)
-		(property "Part Number" "QST8TR"
+		(property "Part Number" "QST8/QST9/IMT18/IMT17/BC807D"
 			(at 111.76 41.148 0)
 			(effects
 				(font
