@@ -1,10 +1,6 @@
 Edit pick n' place csv
-Fix clearance on diff pairs
-Fix stat leds turning on PNP
 Label stat leds
-Debug not turning on on some ports????
-^ caused by usb3 diff pairs.
 regen sch and images
-Add images to readme
-Add bigger reglator
+Add use switching regulator
 Add E-Fuse
+Update readme
