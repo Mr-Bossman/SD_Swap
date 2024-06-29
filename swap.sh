@@ -11,15 +11,26 @@ getdevice() {
 	done
 }
 
+get_blockdev() {
+	# This can match twice so add `-m 1` to grep to only match once
+	SYSFS_BLOCK_RELATIVE=$(realpath --relative-base=$1 /sys/block/* | grep -vm 1 "^/")
+	basename $SYSFS_BLOCK_RELATIVE 2>/dev/null
+}
+
 print_help() {
 	cat << EOF
 To switch the SD card to USB run:
 $0 1
 To switch the SD card to SBC run:
 $0 0
+To print the block dev run:
+$0 p
 If you have multiple devices run either of the above.
 Then run with the last param the same as above:
 $0 \$(Your USB number) 0
+
+NOTE:
+When printing the block device the script waits until the device exists
 
 Examples:
 # $0 0
@@ -39,10 +50,6 @@ Uisng device /sys/bus/usb/devices/3-1
 EOF
 	exit 1
 }
-
-if [ $# -eq 0 ] || ([ $(eval echo \${$#}) != '1' ] && [ $(eval echo \${$#}) != '0' ]); then
-	print_help
-fi
 
 export DEVICES=$(getdevice 0bda:0316)
 if echo $DEVICES | grep -q " "; then
@@ -75,7 +82,21 @@ if [ -z "$DEVICES" ]; then
 	exit 1
 fi
 
+if [ $(eval echo \${$#}) == 'p' ]; then
+	while true; do
+		DEVNAME=$(get_blockdev $DEVICE) && break
+	done
+	echo /dev/$DEVNAME
+	exit 0
+fi
+
 echo "Uisng device" $DEVICE
+
+DEVNAME=$(get_blockdev $DEVICE)
+if [[ ${DEVNAME} ]]; then
+	echo "With devpath of /dev/"$DEVNAME
+fi
+
 export USB_NUM=$(basename $DEVICE)
 
 echo 0 | sudo tee ${DEVICE}/power/autosuspend_delay_ms &>/dev/null
