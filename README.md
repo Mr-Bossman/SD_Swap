@@ -16,6 +16,11 @@ The major improvements are:
 
 I have got SD write speeds up to 65MiB/s so 520Mbit/s
 
+**IMPORTANT**
+
+Faster SD cards may not work on some single board computers as the
+timing and capacitance on the SBC side is not right.
+
 ### Rational
 
 After seeing the [SDWire](https://wiki.tizen.org/SDWire) project I was disappointed by the complexity as well as the lack of USB3. So this project is uses the REALTEK RTS5306E controller which many USB3 to SD adapters use. The chip has power suspend functionality which we can use as a GPIO for switching hosts. The suspend option will shut off the SD cards power but not the controllers; it also has build-in RW protection as to finish writes before switching to the SBC
@@ -86,7 +91,8 @@ echo ${YOUR_USB_NUM} | sudo tee /sys/bus/usb/drivers/usb/bind
 -->
 
 ### TODO
- - write script for Windows and OSX.
+ - Fix SBC side timeing
+ - Write script for Windows and OSX.
  - Edit pick n' place csv
  - Label stat leds
  - Add use switching regulator
