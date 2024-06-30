@@ -25,6 +25,7 @@ To switch the SD card to SBC run:
 $0 0
 To print the block dev run:
 $0 p
+
 If you have multiple devices run either of the above.
 Then run with the last param the same as above:
 $0 \$(Your USB number) 0
@@ -39,6 +40,9 @@ Uisng device /sys/bus/usb/devices/3-4
 # $0 0
 Uisng device /sys/bus/usb/devices/3-4
 Already off.
+
+# $0 p
+/dev/sda
 
 # $0 0
 Multiple devices found! Pass a usb number as param 1...

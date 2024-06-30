@@ -29,35 +29,45 @@ The SDWire project uses a USB to GPIO chip for this, but they have two power con
 
 ### Software
 To swap the SD card between the host PC and the SBC you run
-`./swap.sh 0` or `./swap.sh 1`.
+`sdswap 0` or `sdswap 1`.
 
- `1` is the host PC while `0` is the SBC. You can also chose which device to use if you have multiple attached. To do this run `./swap.sh 1` to print the found devices and type `./swap.sh 1-4 1` or another USB number. I have future plans to write this script for Windows and OSX.
+ `1` is the host PC while `0` is the SBC. You can also chose which device to use if you have multiple attached. To do this run `sdswap 1` to print the found devices and type `sdswap 1-4 1` or another USB number. I have future plans to write this script for Windows and OSX.
 
 ```
-$ ./swap.sh -h
+$ sdswap -h
 
 To switch the SD card to USB run:
-./swap.sh 1
+sdswap 1
 To switch the SD card to SBC run:
-./swap.sh 0
+sdswap 0
+To print the block dev run:
+sdswap p
+
 If you have multiple devices run either of the above.
 Then run with the last param the same as above:
-./swap.sh $(Your USB number) 0
+sdswap $(Your USB number) 0
+
+NOTE:
+When printing the block device the script waits until the device exists
+
 
 Examples:
-# ./swap.sh 0
+# sdswap 0
 Uisng device /sys/bus/usb/devices/3-4
 
-# ./swap.sh 0
+# sdswap 0
 Uisng device /sys/bus/usb/devices/3-4
 Already off.
 
-# ./swap.sh 0
+# sdswap p
+/dev/sda
+
+# sdswap 0
 Multiple devices found! Pass a usb number as param 1...
 Usb num: 3-4
 Usb num: 3-1
 
-# ./swap.sh 3-1 0
+# sdswap 3-1 0
 Uisng device /sys/bus/usb/devices/3-1
 ```
 
