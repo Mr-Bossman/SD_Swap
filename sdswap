@@ -2,19 +2,28 @@
 
 getdevice() {
 	#based on https://unix.stackexchange.com/questions/136781/how-to-get-device-filename-from-lsusb-output-or-by-device-path
-	idV=${1%:*}
-	idP=${1#*:}
-	for path in $(dirname $(find -L /sys/bus/usb/devices/ -maxdepth 2 -name "idVendor")); do
-	if grep -q $idV $path/idVendor && grep -q $idP $path/idProduct; then
-			echo $path
+	local idV=${1%:*}
+	local idP=${1#*:}
+	for path in $(dirname $(find -L /sys/bus/usb/devices/ -maxdepth 2 -name 'idVendor')); do
+		if grep -q "$idV" "$path/idVendor" && grep -q "$idP" "$path/idProduct"; then
+			echo "$path"
 		fi
 	done
 }
 
+run_root() {
+	if [ "$(id -u)" != "0" ]; then
+		sudo "$@"
+	else
+		"$@"
+	fi
+}
+
 get_blockdev() {
 	# This can match twice so add `-m 1` to grep to only match once
-	SYSFS_BLOCK_RELATIVE=$(realpath --relative-base=$1 /sys/block/* | grep -vm 1 "^/")
-	basename $SYSFS_BLOCK_RELATIVE 2>/dev/null
+	local SYSFS_BLOCK_RELATIVE
+	SYSFS_BLOCK_RELATIVE=$(realpath --relative-base="$1" /sys/block/* | grep -vm 1 "^/")
+	basename "$SYSFS_BLOCK_RELATIVE" 2>/dev/null
 }
 
 print_help() {
@@ -55,61 +64,99 @@ EOF
 	exit 1
 }
 
-export DEVICES=$(getdevice 0bda:0316)
-if echo $DEVICES | grep -q " "; then
-	if [ $# -eq 2 ]; then
-		for dev in $DEVICES; do
-			if echo $dev | grep -q $1; then
-				export DEVICE=$dev
-			fi
-		done
-		if [ -z $DEVICE ]; then
-			echo "Device not found. Pass a usb number as param 1..."
+get_devices() {
+	local DEVICES
+	DEVICES=$(getdevice 0bda:0316)
+	if echo "$DEVICES" | grep -q " "; then
+		if [ $# -eq 2 ]; then
 			for dev in $DEVICES; do
-				echo "Usb num:" $(basename $dev)
+				if echo "$dev" | grep -q "$1"; then
+					export DEVICE="$dev"
+				fi
+			done
+			if [ -z "$DEVICE" ]; then
+				echo "Device not found. Pass a usb number as param 1..."
+				for dev in $DEVICES; do
+					echo "Usb num:" "$(basename "$dev")"
+				done
+				exit 1
+			fi
+		else
+			echo "Multiple devices found! Pass a usb number as param 1..."
+			for dev in $DEVICES; do
+				echo "Usb num:" "$(basename "$dev")"
 			done
 			exit 1
 		fi
 	else
-		echo "Multiple devices found! Pass a usb number as param 1..."
-		for dev in $DEVICES; do
-			echo "Usb num:" $(basename $dev)
-		done
+			export DEVICE=$DEVICES
+	fi
+
+	if [ -z "$DEVICES" ]; then
+		echo "No devices found ;("
 		exit 1
 	fi
-else
-		export DEVICE=$DEVICES
-fi
+}
 
-if [ -z "$DEVICES" ]; then
-	echo "No devices found ;("
-	exit 1
-fi
+setup_pwrctl() {
+	echo 0 | run_root tee "$1"/power/autosuspend_delay_ms &>/dev/null
+	echo auto | run_root tee "$1"/power/control &>/dev/null
+}
 
-if [ $(eval echo \${$#}) == 'p' ]; then
+turn_off() {
+	echo "$1" | run_root tee /sys/bus/usb/drivers/usb/unbind &>/dev/null || echo "Already off."
+}
+
+turn_on() {
+	echo "$1" | run_root tee /sys/bus/usb/drivers/usb/bind &>/dev/null || echo "Already on"
+}
+
+print_info() {
+	echo "Uisng device" "$1"
+
+	local DEVNAME
+	DEVNAME=$(get_blockdev "$1")
+	if [[ ${DEVNAME} ]]; then
+		echo "With devpath of /dev/""$DEVNAME"
+	fi
+}
+
+print_dev() {
+	local DEVNAME
 	while true; do
-		DEVNAME=$(get_blockdev $DEVICE) && break
+		DEVNAME=$(get_blockdev "$1") && break
 	done
-	echo /dev/$DEVNAME
+	echo /dev/"$DEVNAME"
 	exit 0
-fi
+}
 
-echo "Uisng device" $DEVICE
+main() {
+	local OPERATION
+	local USB_NUM
 
-DEVNAME=$(get_blockdev $DEVICE)
-if [[ ${DEVNAME} ]]; then
-	echo "With devpath of /dev/"$DEVNAME
-fi
+	OPERATION=$(eval echo "\${$#}")
 
-export USB_NUM=$(basename $DEVICE)
+	case "$OPERATION" in
+		0|1|p)
+			get_devices "$@";;
+		*)
+			print_help;;
+	esac
 
-echo 0 | sudo tee ${DEVICE}/power/autosuspend_delay_ms &>/dev/null
-echo auto | sudo tee ${DEVICE}/power/control &>/dev/null
+	if [ "$OPERATION" == 'p' ]; then
+		print_dev "$DEVICE"
+	fi
 
-if [ $(eval echo \${$#}) == '1' ]; then
-	echo $USB_NUM | sudo tee /sys/bus/usb/drivers/usb/bind &>/dev/null || echo "Already on"
-elif [ $(eval echo \${$#}) == '0' ]; then
-	echo $USB_NUM | sudo tee /sys/bus/usb/drivers/usb/unbind &>/dev/null|| echo "Already off."
-else
-	print_help
-fi
+	print_info "$DEVICE"
+	USB_NUM=$(basename "$DEVICE")
+
+	setup_pwrctl "$DEVICE"
+
+	if [ "$OPERATION" == '1' ]; then
+		turn_on "$USB_NUM"
+	elif [ "$OPERATION" == '0' ]; then
+		turn_off "$USB_NUM"
+	fi
+}
+
+main "$@"
