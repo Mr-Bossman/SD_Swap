@@ -22,7 +22,7 @@ run_root() {
 get_blockdev() {
 	# This can match twice so add `-m 1` to grep to only match once
 	local SYSFS_BLOCK_RELATIVE
-	SYSFS_BLOCK_RELATIVE=$(realpath --relative-base="$1" /sys/block/* | grep -vm 1 "^/")
+	SYSFS_BLOCK_RELATIVE=$(realpath --relative-base="$1" /sys/block/* | grep -vm 1 "^/") || return $?
 	basename "$SYSFS_BLOCK_RELATIVE" 2>/dev/null
 }
 
