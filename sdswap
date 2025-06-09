@@ -1,162 +1,254 @@
 #!/bin/bash
 
-getdevice() {
-	#based on https://unix.stackexchange.com/questions/136781/how-to-get-device-filename-from-lsusb-output-or-by-device-path
-	local idV=${1%:*}
-	local idP=${1#*:}
-	for path in $(dirname $(find -L /sys/bus/usb/devices/ -maxdepth 2 -name 'idVendor')); do
-		if grep -q "$idV" "$path/idVendor" && grep -q "$idP" "$path/idProduct"; then
-			echo "$path"
-		fi
-	done
-}
-
-run_root() {
-	if [ "$(id -u)" != "0" ]; then
-		sudo "$@"
-	else
-		"$@"
-	fi
-}
-
-get_blockdev() {
-	# This can match twice so add `-m 1` to grep to only match once
-	local SYSFS_BLOCK_RELATIVE
-	SYSFS_BLOCK_RELATIVE=$(realpath --relative-base="$1" /sys/block/* | grep -vm 1 "^/") || return $?
-	basename "$SYSFS_BLOCK_RELATIVE" 2>/dev/null
-}
+opt_print=0
+opt_swap=-1
+opt_vidpid="0bda:0316"
+opt_serial=""
+opt_location=""
+opt_address=""
 
 print_help() {
 	cat << EOF
-To switch the SD card to USB run:
-$0 1
-To switch the SD card to SBC run:
-$0 0
-To print the block dev run:
-$0 p
-
-If you have multiple devices run either of the above.
-Then run with the last param the same as above:
-$0 \$(Your USB number) 0
-
-NOTE:
-When printing the block device the script waits until the device exists
-
-Examples:
-# $0 0
-Uisng device /sys/bus/usb/devices/3-4
-
-# $0 0
-Uisng device /sys/bus/usb/devices/3-4
-Already off.
-
-# $0 p
-/dev/sda
-
-# $0 0
-Multiple devices found! Pass a usb number as param 1...
-Usb num: 3-4
-Usb num: 3-1
-
-# $0 3-1 0
-Uisng device /sys/bus/usb/devices/3-1
+Usage: sdswap [-h] [-p] [-c | -t] [-l location] [-a address] [-s serial] [-i VID:PID]
+  -h, --help          Show this help message.
+  -p, --print         Prints the block device
+  -c, --controller    Switches to PC.
+  -t, --target        Switchest to target.
+  -l, --location      Set location.
+  -a, --address       Set address.
+  -s, --serial        Serial number.
+  -i, --id            Set the PID and VID.
+  -e, --exact         Use exact location.
+If no options are given, the script will print the current status of the SDswap device.
+If --print and --controller are given at the same time, the script will wait for the
+SDswap device to be attached to the PC and then print the block device path.
 EOF
 	exit 1
 }
 
-get_devices() {
-	local DEVICES
-	DEVICES=$(getdevice 0bda:0316)
-	if echo "$DEVICES" | grep -q " "; then
-		if [ $# -eq 2 ]; then
-			for dev in $DEVICES; do
-				if echo "$dev" | grep -q "$1"; then
-					export DEVICE="$dev"
-				fi
-			done
-			if [ -z "$DEVICE" ]; then
-				echo "Device not found. Pass a usb number as param 1..."
-				for dev in $DEVICES; do
-					echo "Usb num:" "$(basename "$dev")"
-				done
-				exit 1
-			fi
-		else
-			echo "Multiple devices found! Pass a usb number as param 1..."
-			for dev in $DEVICES; do
-				echo "Usb num:" "$(basename "$dev")"
-			done
-			exit 1
-		fi
-	else
-			export DEVICE=$DEVICES
-	fi
-
-	if [ -z "$DEVICES" ]; then
-		echo "No devices found ;("
+am_root() {
+	if [ "$(id -u)" != "0" ]; then
+		echo "This script must be run as root." 1>&2
 		exit 1
 	fi
 }
 
 setup_pwrctl() {
-	echo 0 | run_root tee "$1"/power/autosuspend_delay_ms &>/dev/null
-	echo auto | run_root tee "$1"/power/control &>/dev/null
+	echo 0 > "$1"/power/autosuspend_delay_ms
+	echo auto > "$1"/power/control
 }
 
-turn_off() {
-	echo "$1" | run_root tee /sys/bus/usb/drivers/usb/unbind &>/dev/null || echo "Already off."
+detach_kernel_driver() {
+	local device="$1"
+	local location
+	local status
+
+	status=$(cat "$device/power/runtime_status")
+
+	if [[ "$status" == "suspended" ]]; then
+		return
+	fi
+
+	am_root
+	setup_pwrctl "$device"
+
+	location=$(basename "$device")
+	echo "$location" > /sys/bus/usb/drivers/usb/unbind
 }
 
-turn_on() {
-	echo "$1" | run_root tee /sys/bus/usb/drivers/usb/bind &>/dev/null || echo "Already on"
+attach_kernel_driver() {
+	local device="$1"
+	local location
+	local status
+
+	status=$(cat "$device/power/runtime_status")
+
+	if [[ "$status" == "active" ]]; then
+		return
+	fi
+
+	am_root
+	setup_pwrctl "$device"
+
+	location=$(basename "$device")
+	echo "$location" > /sys/bus/usb/drivers/usb/bind
 }
 
-print_info() {
-	echo "Uisng device" "$1"
+get_blockdev() {
+	local sysfs_block_relative
 
-	local DEVNAME
-	DEVNAME=$(get_blockdev "$1")
-	if [[ ${DEVNAME} ]]; then
-		echo "With devpath of /dev/""$DEVNAME"
+	# This can match twice so add `-m 1` to grep to only match once
+	sysfs_block_relative=$(realpath --relative-base="$1" /sys/block/* | grep -vm 1 "^/") || return $?
+	basename "$sysfs_block_relative"
+}
+
+do_print() {
+	local device="$1"
+	local dev
+
+	if [ "$opt_print" -eq 0 ]; then
+		return
+	fi
+
+	while [ "$opt_swap" -eq 1 ]; do
+		dev=$(get_blockdev "$device") && break
+	done
+
+	if [ -z "$dev" ]; then
+		echo "Error getting block device path: device not found" 1>&2
+		exit 1
+	else
+		echo /dev/"$dev"
 	fi
 }
 
-print_dev() {
-	local DEVNAME
-	while true; do
-		DEVNAME=$(get_blockdev "$1") && break
+print_status() {
+	local device="$1"
+	local status
+
+	status=$(cat "$device/power/runtime_status")
+
+	if [[ "$status" == "active" ]]; then
+		echo "SDswap is attached to PC."
+	elif [[ "$status" == "suspended" ]]; then
+		echo "SDswap is attached to target."
+	else
+		echo "Unknown status: $status"
+	fi
+}
+
+do_swap() {
+	local device="$1"
+
+	if [ "$opt_swap" -eq 1 ]; then
+		attach_kernel_driver "$device"
+	elif [ "$opt_swap" -eq 0 ]; then
+		detach_kernel_driver "$device"
+	elif [ "$opt_print" -eq 0 ]; then
+		print_status "$device"
+	fi
+}
+
+get_device() {
+	local path
+	local loc
+	local busnum
+	local devnum
+	local serial
+	local idV=${opt_vidpid%:*}
+	local idP=${opt_vidpid#*:}
+	local retdev
+
+	# We do want word splitting for find
+	# shellcheck disable=SC2046
+	for path in $(dirname $(find -L /sys/bus/usb/devices/ -maxdepth 2 -name 'idVendor')); do
+		busnum=$(cat "$path/busnum")
+		devnum=$(cat "$path/devnum")
+		loc=$(basename "$path")
+
+		if [ -n "$opt_serial" ] && [ -e "$path/serial" ]; then
+			serial=$(cat "$path/serial")
+			if [[ "$opt_serial" != "$serial" ]]; then
+				continue
+			fi
+		fi
+
+		if [ -n "$opt_address" ] && [[ "$busnum-$devnum" != "$opt_address" ]]; then
+			continue
+		fi
+
+		if [ -n "$opt_location" ] && [[ "$loc" != "$opt_location" ]]; then
+			continue
+		fi
+
+		if grep -q "$idV" "$path/idVendor" && grep -q "$idP" "$path/idProduct"; then
+			if [ -z "$retdev" ]; then
+				retdev="$path"
+			else
+				echo "Multiple devices found." 1>&2
+				exit 1
+			fi
+		fi
 	done
-	echo /dev/"$DEVNAME"
-	exit 0
+	if [ -z "$retdev" ]; then
+		echo "No device found." 1>&2
+		exit 1
+	else
+		echo "$retdev"
+	fi
 }
 
 main() {
-	local OPERATION
-	local USB_NUM
+	local args
+	local device
 
-	OPERATION=$(eval echo "\${$#}")
-
-	case "$OPERATION" in
-		0|1|p)
-			get_devices "$@";;
-		*)
-			print_help;;
-	esac
-
-	if [ "$OPERATION" == 'p' ]; then
-		print_dev "$DEVICE"
+	# require enhanced getopt
+	getopt -T > /dev/null
+	if [ $? -ne 4 ]; then
+		echo "Enhanced getopt is not available, add it to your PATH?"
+		exit 1
 	fi
 
-	print_info "$DEVICE"
-	USB_NUM=$(basename "$DEVICE")
+	args=$(getopt -u -o hpctel:a:s:i: \
+		-l help,print,controller,target,exact,location:,address:,serial:,id: -- "$@")
+	# Shellcheck likes to test commands directly rather than with $? but sometimes they
+	# are too long to put in the same test.
+	# shellcheck disable=SC2181
+	[ $? -ne 0 ] && exit 2;
+	# We do want word splitting for this
+	# shellcheck disable=SC2086
+	set -- $args
+	while [ $# -gt 0 ]; do
+		case "$1" in
+			-h|--help)
+				print_help
+				;;
+			-p|--print)
+				opt_print=1
+				;;
+			-c|--controller)
+				opt_swap=1
+				;;
+			-t|--target)
+				opt_swap=0
+				;;
+			-e|--exact)
+				break
+				;;
+			-l|--location)
+				shift
+				opt_location=$1
+				;;
+			-a|--address)
+				shift
+				opt_address=$1
+				;;
+			-s|--serial)
+				shift
+				opt_serial=$1
+				;;
+			-i|--id)
+				shift
+				opt_vidpid=$1
+				;;
+			--)
+				break
+				;;
+			*)
+				echo "Unknown option: $1"
+				print_help;;
+		esac
+		shift
+	done
 
-	setup_pwrctl "$DEVICE"
-
-	if [ "$OPERATION" == '1' ]; then
-		turn_on "$USB_NUM"
-	elif [ "$OPERATION" == '0' ]; then
-		turn_off "$USB_NUM"
+	device=$(get_device)
+	if [ -z "$device" ]; then
+		exit 1
 	fi
+
+	do_swap "$device"
+
+	do_print "$device"
 }
 
 main "$@"

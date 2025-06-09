@@ -26,11 +26,10 @@ runmake () {
 test() {
 	runmake
 	echo "Swaping SD card to USB..."
-	sdswap 1
-	DEV=$(sdswap p)
+	DEV=$(sdswap -pc)
 	echo "Flashing to $DISK..."
 	flash "$DEV"
-	sdswap 0
+	sdswap -t
 	echo Please reset board
 	passed "$1"
 }
