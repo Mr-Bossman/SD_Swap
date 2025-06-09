@@ -29,46 +29,40 @@ The SDWire project uses a USB to GPIO chip for this, but they have two power con
 
 ### Software
 To swap the SD card between the host PC and the SBC you run
-`sdswap 0` or `sdswap 1`.
+`sdswap -t` or `sdswap -c`.
 
- `1` is the host PC while `0` is the SBC. You can also chose which device to use if you have multiple attached. To do this run `sdswap 1` to print the found devices and type `sdswap 1-4 1` or another USB number. I have future plans to write this script for Windows and OSX.
+ `-c` is the host PC while `-t` is the SBC. You can also chose which device to use if you have multiple attached. To do this run `lsusb` to show available the devices and type `sdswap -a 1-4 -c` in the format of `busNumber-deviceNumber`. I have future plans to write this script for Windows.
 
 ```
 $ sdswap -h
-
-To switch the SD card to USB run:
-sdswap 1
-To switch the SD card to SBC run:
-sdswap 0
-To print the block dev run:
-sdswap p
-
-If you have multiple devices run either of the above.
-Then run with the last param the same as above:
-sdswap $(Your USB number) 0
-
-NOTE:
-When printing the block device the script waits until the device exists
-
+Usage: sdswap [-h] [-p] [-c | -t] [-l location] [-a address] [-s serial] [-i VID:PID]
+  -h, --help          Show this help message.
+  -p, --print         Prints the block device
+  -c, --controller    Switches to PC.
+  -t, --target        Switchest to target.
+  -l, --location      Set location.
+  -a, --address       Set address.
+  -s, --serial        Serial number.
+  -i, --id            Set the PID and VID.
+  -e, --exact         Use exact location.
+If no options are given, the script will print the current status of the SDswap device.
+If --print and --controller are given at the same time, the script will wait for the
+SDswap device to be attached to the PC and then print the block device path.
 
 Examples:
-# sdswap 0
-Uisng device /sys/bus/usb/devices/3-4
+# sdswap
+SDswap is attached to PC.
 
-# sdswap 0
-Uisng device /sys/bus/usb/devices/3-4
-Already off.
-
-# sdswap p
+# sdswap -p
 /dev/sda
 
 # sdswap 0
-Multiple devices found! Pass a usb number as param 1...
-Usb num: 3-4
-Usb num: 3-1
+Multiple devices found.
 
-# sdswap 3-1 0
-Uisng device /sys/bus/usb/devices/3-1
+# sdswap -l 3-1.1 -t
+
+# sdswap -a 3-19 -pc
+/dev/sda
 ```
 
 To manually controll the port use:
@@ -102,7 +96,8 @@ echo ${YOUR_USB_NUM} | sudo tee /sys/bus/usb/drivers/usb/bind
 
 ### TODO
  - Fix SBC side timeing
- - Write script for Windows and OSX.
+ - Write program for Windows.
+ - Fix serial number not working
  - Edit pick n' place csv
  - Label stat leds
  - Add use switching regulator
